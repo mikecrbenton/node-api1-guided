@@ -1,14 +1,17 @@
 const express = require("express")
-const db = require("./database")
+const db = require('./database')
 
 // create an instance of an Express server
-const server = express()
+// this creates the framework of what was all the code in server_raw.js
+// Express.js takes care of a lot of the stuff under the hood
+const server = express() 
 
-// Needed in order for Express to parse out JSON bodies 
-server.use( express.json() )
+// Installs middleware to allow Express JS
+// to parse incoming JSON request bodies
+server.use(express.json())
 
 server.get("/", (req,res)=>{
-   res.json( {message: "Hello, World" } )
+   res.json( {message: "Connected Successfully!" } )
 })
 
 server.get("/users", (req, res) => {
@@ -34,17 +37,17 @@ server.get("/users/:id", (req, res) => {
 
 server.post("/users", (req,res) => {
    const newUser = db.createUser( {
-      name: req.body.name  // instead of hardcoding a name, correlates with line 8
+      name: req.body.name  
    })
    res.status(201).json(newUser)
 })
 
 server.put("/users/:id", (req,res) => {
-   const id = req.params.id
-   const user = db.getUsersById(id)
+
+   const user = db.getUsersById(req.params.id)
 
    if(user) {
-      const updatedUser = db.updateUser(id, { name: req.body.name } )
+      const updatedUser = db.updateUser(user.id, { name: req.body.name } )
       res.json(updatedUser)
    }else{
       res.status(404).json( {message: "User not found"} ) 
@@ -53,11 +56,11 @@ server.put("/users/:id", (req,res) => {
 })
 
 server.delete("/users/:id", (req,res) => {
-   const id = req.params.id
-   const user = db.getUsersById(id)
+
+   const user = db.getUsersById(req.params.id)
 
    if(user) {
-      db.deleteUser(id)
+      db.deleteUser(user.id)
       res.status(204).end() // successful empty response
    }else{
       res.status(404).json( {message: "User not found"} ) 
@@ -65,7 +68,11 @@ server.delete("/users/:id", (req,res) => {
 
 })
 
-// web servers need to be continuously listening
-server.listen(8080, ()=>{
-   console.log("server started on port 8080")
-})
+
+module.exports = server
+
+//=======WAYS TO SEND DATA FROM FRONT-END TO BACK-END============
+// URL
+// REQUEST BODY
+// REQUEST HEADER
+// QUERY STRING
