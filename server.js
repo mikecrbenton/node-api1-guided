@@ -65,7 +65,7 @@ server.delete("/users/:id", (req,res) => {
 
 })
 
-// web servers need to coninuously listening
+// web servers need to be continuously listening
 server.listen(8080, ()=>{
-   console.log("server started")
+   console.log("server started on port 8080")
 })
